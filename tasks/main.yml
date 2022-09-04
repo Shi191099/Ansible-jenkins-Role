@@ -1,0 +1,56 @@
+---
+# tasks file for shi
+
+- name: "Setup Jenkins Repo"
+  shell: "wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+  ignore_errors: yes
+  register: repojen
+
+
+- name: "Load Key"
+  shell: "rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key"
+  ignore_errors: yes
+  register: loadkey
+
+- name: "Installing Java"
+  shell: "amazon-linux-extras install java-openjdk11 -y"
+  ignore_errors: yes
+  register: javainstall
+
+
+- name: "Install Jenkins"
+  shell: "yum install jenkins -y"
+  ignore_errors: yes
+  register: installjenkins
+
+
+- name: "Reload Daemon"
+  shell: "systemctl daemon-reload"
+  ignore_errors: yes
+  register: reloaddaemon
+
+
+- name: "Enable jenkins service"
+  shell: "systemctl enable jenkins"
+  ignore_errors: yes
+  register: jenservice
+
+- name: "Install Git"
+  shell: "yum install git -y"
+  ignore_errors: yes
+  register: installgit
+
+
+- name: "Start the Jenkins Engine"
+  ansible.builtin.systemd:
+      name: "jenkins" 
+      state: started
+      enabled: yes
+
+- name: "See Admin pass"
+  command: "cat /var/lib/jenkins/secrets/initialAdminPassword"
+  ignore_errors: yes
+  register: seepass
+
+- debug: msg="{{ seepass.stdout }}"
