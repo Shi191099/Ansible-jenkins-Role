@@ -1,6 +1,5 @@
 ---
-# tasks file for shi
-
+# tasks file for ansible-jenkinsserver
 - name: "Setup Jenkins Repo"
   shell: "wget -O /etc/yum.repos.d/jenkins.repo \
     https://pkg.jenkins.io/redhat-stable/jenkins.repo"
@@ -54,3 +53,4 @@
   register: seepass
 
 - debug: msg="{{ seepass.stdout }}"
+
